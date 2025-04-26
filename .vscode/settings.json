@@ -1,0 +1,18 @@
+{
+    "editor.rulers": [
+        100,
+    ],
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "charliermarsh.ruff",
+    },
+    "pylint.enabled": false,
+    "ruff.lint.enable": true,
+    "python.testing.pytestArgs": [
+        "src"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "editor.fontSize": 14,
+    "flake8.enabled": false,
+}

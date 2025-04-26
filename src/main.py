@@ -8,7 +8,7 @@ wm.connect()
 
 while True:
     if wm.is_connected():
-        print('Connected!')
+        print("Connected!")
     else:
-        print('Disconnected!')
+        print("Disconnected!")
     utime.sleep(10)
