@@ -8,6 +8,7 @@
     },
     "pylint.enabled": false,
     "ruff.lint.enable": true,
+    "ruff.lint.select": ["E501"],
     "python.testing.pytestArgs": [
         "src"
     ],

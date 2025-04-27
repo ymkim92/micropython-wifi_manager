@@ -1,14 +1,4 @@
-# [tool.black]
-# line-length = 100
-
-# [tool.isort]
-# profile = "black"
-# line_length = 100
-
-# [tool.pylint.messages_control]
-# disable = [ "missing-class-docstring",
-#         "consider-using-f-string",
-#         "import-error",
-#         "missing-function-docstring"]
 [tool.ruff]
 line-length = 100
+# keep normal rules and add this extra one.
+lint.extend-select = ["E501"]

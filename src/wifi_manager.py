@@ -17,7 +17,8 @@ class WifiManager:
         self.wlan_sta.active(True)
         self.wlan_ap = network.WLAN(network.AP_IF)
 
-        # Avoids simple mistakes with wifi ssid and password lengths, but doesn't check for forbidden or unsupported characters.
+        # Avoids simple mistakes with wifi ssid and password lengths,
+        # but doesn't check for forbidden or unsupported characters.
         if len(ssid) > 32:
             raise Exception("The SSID cannot be longer than 32 characters.")
         else:
@@ -34,7 +35,8 @@ class WifiManager:
         # There is no encryption, it's just a plain text archive. Be aware of this security problem!
         self.wifi_credentials = "wifi.dat"
 
-        # Prevents the device from automatically trying to connect to the last saved network without first going through the steps defined in the code.
+        # Prevents the device from automatically trying to connect to the last saved network
+        # without first going through the steps defined in the code.
         self.wlan_sta.disconnect()
 
         # Change to True if you want the device to reboot after configuration.
@@ -140,7 +142,8 @@ class WifiManager:
                             break
                         self.request += self.client.recv(128)
                 except Exception as error:
-                    # It's normal to receive timeout errors in this stage, we can safely ignore them.
+                    # It's normal to receive timeout errors in this stage,
+                    # we can safely ignore them.
                     if self.debug:
                         print(error)
                     pass
@@ -210,11 +213,13 @@ class WifiManager:
             ssid = ssid.decode("utf-8")
             self.client.sendall(
                 """
-                        <p><input type="radio" name="ssid" value="{0}" id="{0}"><label for="{0}">&nbsp;{0}</label></p>
+                        <p><input type="radio" name="ssid" value="{0}" id="{0}">
+                        <label for="{0}">&nbsp;{0}</label></p>
             """.format(ssid)
             )
         self.client.sendall("""
-                        <p><label for="password">Password:&nbsp;</label><input type="password" id="password" name="password"></p>
+                        <p><label for="password">Password:&nbsp;</label>
+                            <input type="password" id="password" name="password"></p>
                         <p><input type="submit" value="Connect"></p>
                     </form>
                 </body>
@@ -230,7 +235,7 @@ class WifiManager:
             if len(ssid) == 0:
                 self.send_response(
                     """
-                    <p>SSID must be providaded!</p>
+                    <p>SSID must be provided!</p>
                     <p>Go back and try again!</p>
                 """,
                     400,
