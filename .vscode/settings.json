@@ -10,8 +10,9 @@
     "ruff.lint.enable": true,
     "ruff.lint.select": ["E501"],
     "python.testing.pytestArgs": [
-        "src"
+        "tests",
     ],
+    "python.envFile": "${workspaceFolder}/.env",
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "editor.fontSize": 14,

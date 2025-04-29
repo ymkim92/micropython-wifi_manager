@@ -1,7 +1,7 @@
 run-test:
-    pytest -svv 
+    PYTHONPATH=src pytest -svv 
 run-test-filter TEST:
-    pytest -svv tests/*{{TEST}}*
+    PYTHONPATH=src pytest -svv tests/*{{TEST}}*
 lint:
     ruff format src tests
     ruff check src tests --fix --exit-zero --line-length 100 --target-version py38

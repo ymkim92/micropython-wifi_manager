@@ -22,39 +22,20 @@ def read_credentials(wifi_credentials, debug=False):
     return profiles
 
 
-def url_decode(url_string, debug=False):
-    # Source: https://forum.micropython.org/viewtopic.php?t=3076
-    # unquote('abc%20def') -> b'abc def'
-    # Note: strings are encoded as UTF-8. This is only an issue if it contains
-    # unescaped non-ASCII characters, which URIs should not.
-
-    if not url_string:
-        return b""
-
-    if isinstance(url_string, str):
-        url_string = url_string.encode("utf-8")
-
-    bits = url_string.split(b"%")
-
-    if len(bits) == 1:
-        return url_string
-
-    res = [bits[0]]
-    appnd = res.append
-    hextobyte_cache = {}
-
-    for item in bits[1:]:
-        try:
-            code = item[:2]
-            char = hextobyte_cache.get(code)
-            if char is None:
-                char = hextobyte_cache[code] = bytes([int(code, 16)])
-            appnd(char)
-            appnd(item[2:])
-        except Exception as error:
-            if debug:
-                print(error)
-            appnd(b"%")
-            appnd(item)
-
-    return b"".join(res) 
+def url_decode(data):
+    if isinstance(data, str):
+        data = data.encode("utf-8")
+    result = bytearray()
+    i = 0
+    while i < len(data):
+        if data[i : i + 1] == b"%":
+            if i + 2 < len(data) and data[i + 1 : i + 3].isalnum():
+                try:
+                    result.append(int(data[i + 1 : i + 3], 16))
+                    i += 3
+                    continue
+                except ValueError:
+                    pass
+        result.append(data[i])
+        i += 1
+    return bytes(result)
