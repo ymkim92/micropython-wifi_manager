@@ -1,7 +1,8 @@
 import network
 import time
-from .network_utils import write_credentials, read_credentials
+from .network_utils import read_credentials
 from .webserver import WebServer
+
 
 class WifiManager:
     def __init__(self, ssid="WifiManager", password="wifimanager", reboot=True, debug=False):

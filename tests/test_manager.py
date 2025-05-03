@@ -9,6 +9,7 @@ if "network" not in sys.modules:
     sys.modules["network"].WLAN = lambda iface: None
 
 import pytest
+from unittest.mock import patch, MagicMock
 from wifi_manager.manager import WifiManager
 from wifi_manager.network_utils import write_credentials
 
@@ -79,3 +80,11 @@ def test_wifi_manager_connect(tmp_path):
     write_credentials(wm.wifi_credentials, {"ssid1": "pass1"})
     wm.connect()
     assert wm.is_connected()
+
+
+@patch("wifi_manager.webserver.read_credentials", return_value={})
+def test_wifi_manager_connected_already(mock_read_credentials):
+    wm = WifiManager(ssid="TestSSID", password="TestPass123")
+    wm._is_connected = True  # Simulate already connected
+    wm.connect()
+    mock_read_credentials.assert_not_called()
