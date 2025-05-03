@@ -1,4 +1,3 @@
-import pytest
 from wifi_manager.network_utils import write_credentials, read_credentials, url_decode
 
 

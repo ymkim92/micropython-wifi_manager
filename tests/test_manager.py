@@ -4,11 +4,13 @@ import types
 if "machine" not in sys.modules:
     sys.modules["machine"] = types.ModuleType("machine")
     sys.modules["machine"].reset = lambda: None
-sys.modules["network"] = types.ModuleType("network")
-sys.modules["network"].WLAN = lambda iface: None  # You can override this in your test setup
+if "network" not in sys.modules:
+    sys.modules["network"] = types.ModuleType("network")
+    sys.modules["network"].WLAN = lambda iface: None
 
 import pytest
 from wifi_manager.manager import WifiManager
+from wifi_manager.network_utils import write_credentials
 
 
 class DummyWLAN:
@@ -69,12 +71,11 @@ def test_wifi_manager_password_length():
         WifiManager(password="short")
 
 
-def test_wifi_manager_connect(monkeypatch, tmp_path):
+def test_wifi_manager_connect(tmp_path):
     wm = WifiManager(ssid="TestSSID", password="TestPass123")
     wm.wifi_credentials = str(tmp_path / "wifi.dat")
-    # Save credentials for ssid1
-    from src.wifi_manager.network_utils import write_credentials
 
+    # Save credentials for ssid1
     write_credentials(wm.wifi_credentials, {"ssid1": "pass1"})
     wm.connect()
     assert wm.is_connected()
