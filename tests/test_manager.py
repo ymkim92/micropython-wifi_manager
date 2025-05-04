@@ -38,7 +38,7 @@ class DummyWLAN:
 
     def ifconfig(self):
         return self._ifconfig
-    
+
 
 @pytest.fixture(autouse=True)
 def patch_network(monkeypatch):
@@ -102,3 +102,10 @@ def test_wifi_manager_connect_not_connected_and_no_credentials(mock_webserver, t
     assert not wm.is_connected()
     mock_webserver.assert_called_once_with(wm)
     mock_instance.run.assert_called_once()
+
+
+def test_wifi_manager_disconnect():
+    wm = WifiManager(ssid="TestSSID", password="TestPass123")
+    wm.wlan_sta._connected = True
+    wm.disconnect()
+    assert wm.is_connected() is False
