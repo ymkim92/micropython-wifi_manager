@@ -38,7 +38,7 @@ class DummyWLAN:
 
     def ifconfig(self):
         return self._ifconfig
-
+    
 
 @pytest.fixture(autouse=True)
 def patch_network(monkeypatch):
@@ -82,9 +82,23 @@ def test_wifi_manager_connect(tmp_path):
     assert wm.is_connected()
 
 
-@patch("wifi_manager.webserver.read_credentials", return_value={})
+@patch("wifi_manager.manager.read_credentials", return_value={})
 def test_wifi_manager_connected_already(mock_read_credentials):
     wm = WifiManager(ssid="TestSSID", password="TestPass123")
-    wm._is_connected = True  # Simulate already connected
+    wm.wlan_sta._connected = True  # Simulate already connected
     wm.connect()
     mock_read_credentials.assert_not_called()
+
+
+@patch("wifi_manager.manager.WebServer")
+def test_wifi_manager_connect_not_connected_and_no_credentials(mock_webserver, tmp_path):
+    mock_instance = MagicMock()
+    mock_webserver.return_value = mock_instance
+    wm = WifiManager(ssid="TestSSID", password="TestPass123")
+    wm.wifi_credentials = str(tmp_path / "wifi.dat")
+
+    write_credentials(wm.wifi_credentials, {"ssid3": "pass3"})
+    wm.connect()
+    assert not wm.is_connected()
+    mock_webserver.assert_called_once_with(wm)
+    mock_instance.run.assert_called_once()

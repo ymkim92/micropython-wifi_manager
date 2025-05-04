@@ -1,7 +1,7 @@
 import network
 import time
-from .network_utils import read_credentials
-from .webserver import WebServer
+from wifi_manager.network_utils import read_credentials
+from wifi_manager.webserver import WebServer
 
 
 class WifiManager:
