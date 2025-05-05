@@ -51,10 +51,11 @@ def test_run(mock_manager):
     server._handle_client = Mock()
     client = Mock()
     mock_socket.accept.return_value = (client, None)
+    mock_manager.wlan_sta.isconnected.side_effect = [False, True]
 
     server.run()
     mock_socket.accept.assert_called_once()
-    # server._handle_client.assert_called_once_with(client)
+    server._handle_client.assert_called_once_with(client)
 
 
 def test_parse_request_valid(mock_manager):
