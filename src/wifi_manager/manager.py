@@ -22,8 +22,8 @@ class WifiManager:
         self.ap_authmode = 3
         self.wifi_credentials = "wifi.dat"
         self.wlan_sta.disconnect()
-        self.reboot = reboot
-        self.debug = debug
+        self.reboot: bool = reboot
+        self.debug: bool = debug
 
     def connect(self):
         if self.wlan_sta.isconnected():

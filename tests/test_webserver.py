@@ -1,11 +1,18 @@
+import sys
+import types
+
+if "machine" not in sys.modules:
+    sys.modules["machine"] = types.ModuleType("machine")
+    sys.modules["machine"].reset = lambda: None
+
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, Mock
 from wifi_manager.webserver import WebServer
 
 
 @pytest.fixture
 def mock_manager():
-    mock = MagicMock()
+    mock = Mock()
     mock.wlan_ap.ifconfig.return_value = ["192.168.4.1"]
     mock.wlan_sta.isconnected.return_value = False
     mock.wlan_sta.scan.return_value = [(b"TestSSID",)]
@@ -13,9 +20,15 @@ def mock_manager():
     mock.ap_password = "password123"
     mock.ap_authmode = 3
     mock.reboot = False
-    mock.wifi_credentials = "cred.json"
+    mock.wifi_credentials = "wifi.dat"
     mock.wifi_connect.return_value = True
     return mock
+
+
+# def test_reboot_device(mock_manager):
+#     server = WebServer(mock_manager)
+#     url = server._reboot_device(request)
+#     assert url == "configure"
 
 
 def test_parse_request_valid(mock_manager):
@@ -63,6 +76,7 @@ def test_handle_configure_success(mock_write, mock_read, mock_decode, mock_manag
     mock_decode.return_value = b"ssid=TestSSID&password=abc123"
     server = WebServer(mock_manager, sleep_fn=lambda x: None, reset_fn=lambda: None)
     client = MagicMock()
+    mock_manager.wlan_sta.ifconfig.return_value = ["192.168.4.1"]
     server.handle_configure(client, b"dummy request")
     client.sendall.assert_called()
     mock_write.assert_called()

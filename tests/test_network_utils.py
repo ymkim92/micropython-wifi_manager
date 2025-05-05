@@ -9,6 +9,12 @@ def test_write_and_read_credentials(tmp_path):
     assert loaded == profiles
 
 
+def test_write_and_read_credentials_exception(tmp_path):
+    file_path = tmp_path / "wifi.dat"
+    loaded = read_credentials(str(file_path), debug=True)
+    assert loaded == {}
+
+
 def test_write_and_read_empty_credentials(tmp_path):
     file_path = tmp_path / "wifi.dat"
     profiles = {}

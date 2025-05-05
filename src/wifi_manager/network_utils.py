@@ -14,7 +14,6 @@ def read_credentials(wifi_credentials, debug=False):
     except Exception as error:
         if debug:
             print(error)
-        pass
     profiles = {}
     for line in lines:
         ssid, password = line.strip().split(";")
