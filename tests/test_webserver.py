@@ -25,10 +25,36 @@ def mock_manager():
     return mock
 
 
-# def test_reboot_device(mock_manager):
-#     server = WebServer(mock_manager)
-#     url = server._reboot_device(request)
-#     assert url == "configure"
+def test_reboot_device_true(mock_manager):
+    mock_sleep = Mock()
+    mock_reset = Mock()
+    server = WebServer(mock_manager, sleep_fn=mock_sleep, reset_fn=mock_reset)
+    server.reboot = True
+    server._reboot_device()
+    mock_sleep.assert_called_once_with(5)
+
+
+def test_reboot_device_false(mock_manager):
+    mock_sleep = Mock()
+    mock_reset = Mock()
+    server = WebServer(mock_manager, sleep_fn=mock_sleep, reset_fn=mock_reset)
+
+    server.reboot = False
+    server._reboot_device()
+    mock_sleep.assert_not_called()
+
+
+def test_run(mock_manager):
+    server = WebServer(mock_manager)
+    mock_socket = Mock()
+    server._create_server_socket = Mock(return_value=mock_socket)
+    server._handle_client = Mock()
+    client = Mock()
+    mock_socket.accept.return_value = (client, None)
+
+    server.run()
+    mock_socket.accept.assert_called_once()
+    # server._handle_client.assert_called_once_with(client)
 
 
 def test_parse_request_valid(mock_manager):

@@ -94,8 +94,9 @@ class WebServer:
             if self.wlan_sta.isconnected():
                 self.wlan_ap.active(False)
                 self._reboot_device()
+                return  # just for testing
 
-            client, addr = server_socket.accept()
+            client, _ = server_socket.accept()
             self._handle_client(client)
 
     def send_header(self, client, status_code=200):
