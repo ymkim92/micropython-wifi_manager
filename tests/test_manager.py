@@ -14,43 +14,28 @@ from wifi_manager.manager import WifiManager
 from wifi_manager.network_utils import write_credentials
 
 
-class DummyWLAN:
-    def __init__(self):
-        self._connected = False
-        self._scanned = [(b"ssid1",), (b"ssid2",)]
-        self._ifconfig = ("192.168.1.2", "255.255.255.0", "192.168.1.1", "8.8.8.8")
-
-    def active(self, val):
-        pass
-
-    def isconnected(self):
-        return self._connected
-
-    def connect(self, ssid, password):
-        if ssid == "ssid1" and password == "pass1":
-            self._connected = True
-
-    def disconnect(self):
-        self._connected = False
-
-    def scan(self):
-        return self._scanned
-
-    def ifconfig(self):
-        return self._ifconfig
-
-
 @pytest.fixture(autouse=True)
 def patch_network(monkeypatch):
     import wifi_manager.manager as manager_mod
 
+    # Create mock WLAN class
+    mock_wlan = MagicMock()
+    mock_wlan._connected = False
+    mock_wlan.isconnected.side_effect = lambda: mock_wlan._connected
+    mock_wlan.scan.return_value = [(b"ssid1",), (b"ssid2",)]
+    mock_wlan.ifconfig.return_value = ("192.168.1.2", "255.255.255.0", "192.168.1.1", "8.8.8.8")
+    mock_wlan.connect.side_effect = lambda ssid, password: setattr(
+        mock_wlan, "_connected", ssid == "ssid1" and password == "pass1"
+    )
+    mock_wlan.disconnect.side_effect = lambda: setattr(mock_wlan, "_connected", False)
+
     # Mock the network module
     sys.modules["network"] = types.ModuleType("network")
-    sys.modules["network"].STA_IF = 0  # Mock STA_IF
-    sys.modules["network"].AP_IF = 1  # Mock AP_IF
-    sys.modules["network"].WLAN = lambda iface: DummyWLAN()
+    sys.modules["network"].STA_IF = 0
+    sys.modules["network"].AP_IF = 1
+    sys.modules["network"].WLAN = lambda iface: mock_wlan
 
-    # Patch the network module in the wifi_manager.manager module
+    # Patch the network module
     monkeypatch.setattr(manager_mod, "network", sys.modules["network"])
     yield
 
@@ -109,3 +94,10 @@ def test_wifi_manager_disconnect():
     wm.wlan_sta._connected = True
     wm.disconnect()
     assert wm.is_connected() is False
+
+
+# def test_manager_wifi_connect():
+#     wm = WifiManager(ssid="TestSSID", password="TestPass123")
+#     wm.wlan_sta._connected = True
+#     wm.disconnect()
+#     assert wm.is_connected() is False
