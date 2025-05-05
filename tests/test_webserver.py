@@ -6,7 +6,7 @@ if "machine" not in sys.modules:
     sys.modules["machine"].reset = lambda: None
 
 import pytest
-from unittest.mock import MagicMock, patch, Mock
+from unittest.mock import patch, Mock
 from wifi_manager.webserver import WebServer
 
 
@@ -49,14 +49,14 @@ def test_parse_request_invalid(mock_manager, capsys):
 
 def test_send_header(mock_manager):
     server = WebServer(mock_manager)
-    client = MagicMock()
+    client = Mock()
     server.send_header(client)
     assert client.send.call_count == 3
 
 
 def test_send_response(mock_manager):
     server = WebServer(mock_manager)
-    client = MagicMock()
+    client = Mock()
     server.send_response(client, "<h1>Hello</h1>")
     client.sendall.assert_called()
     client.close.assert_called()
@@ -64,7 +64,7 @@ def test_send_response(mock_manager):
 
 def test_handle_root(mock_manager):
     server = WebServer(mock_manager)
-    client = MagicMock()
+    client = Mock()
     server.handle_root(client)
     client.sendall.assert_called()
 
@@ -75,7 +75,7 @@ def test_handle_root(mock_manager):
 def test_handle_configure_success(mock_write, mock_read, mock_decode, mock_manager):
     mock_decode.return_value = b"ssid=TestSSID&password=abc123"
     server = WebServer(mock_manager, sleep_fn=lambda x: None, reset_fn=lambda: None)
-    client = MagicMock()
+    client = Mock()
     mock_manager.wlan_sta.ifconfig.return_value = ["192.168.4.1"]
     server.handle_configure(client, b"dummy request")
     client.sendall.assert_called()
@@ -84,6 +84,6 @@ def test_handle_configure_success(mock_write, mock_read, mock_decode, mock_manag
 
 def test_handle_not_found(mock_manager):
     server = WebServer(mock_manager)
-    client = MagicMock()
+    client = Mock()
     server.handle_not_found(client)
     client.sendall.assert_called()
