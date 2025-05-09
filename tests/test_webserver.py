@@ -114,3 +114,21 @@ def test_handle_not_found(mock_manager):
     client = Mock()
     server.handle_not_found(client)
     client.sendall.assert_called()
+
+
+@patch("wifi_manager.webserver.socket")
+def test_create_server_socket(mock_socket, mock_manager):
+    mock_socket.socket.return_value = mock_socket
+    mock_socket.bind = Mock()
+    mock_socket.listen = Mock()
+    mock_socket.setsockopt = Mock()
+
+    server = WebServer(mock_manager)
+    server._create_server_socket()
+
+    assert mock_socket.socket.call_count == 1
+    assert mock_socket.bind.call_count == 1
+    assert mock_socket.listen.call_count == 1
+    assert mock_socket.setsockopt.call_count == 1
+    assert mock_socket.bind.call_args[0][0] == ("", 80)
+    assert mock_socket.listen.call_args[0][0] == 1
