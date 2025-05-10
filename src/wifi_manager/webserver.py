@@ -69,7 +69,7 @@ class WebServer:
             if url == "":
                 self.handle_root(client)
             elif url == "configure":
-                print(request)
+                print(f"##########request {request}")
                 self.handle_configure(client, request)
             else:
                 self.handle_not_found(client)
@@ -151,7 +151,7 @@ class WebServer:
 
     def handle_configure(self, client, request):
         """Handle the configure URL."""
-        match = re.search(b"ssid=([^&]*)&password=(.*)", url_decode(request, self.debug))
+        match = re.search(b"ssid=([^&]*)&password=(.*)", url_decode(request))
         if not match:
             self.send_response(client, "<p>Parameters not found!</p>", 400)
             return

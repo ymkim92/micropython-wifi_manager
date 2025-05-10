@@ -96,15 +96,37 @@ def test_handle_root(mock_manager):
     client.sendall.assert_called()
 
 
-@patch("wifi_manager.webserver.url_decode")
-@patch("wifi_manager.webserver.read_credentials", return_value={})
+# @patch("wifi_manager.webserver.url_decode")
+# @patch("wifi_manager.webserver.write_credentials")
+# def test_handle_configure_success(mock_write, mock_decode, mock_manager):
+#     mock_decode.return_value = b"ssid=TestSSID&password=abc123"
+#     server = WebServer(mock_manager, sleep_fn=lambda x: None, reset_fn=lambda: None)
+#     client = Mock()
+#     mock_manager.wlan_sta.ifconfig.return_value = ["192.168.4.1"]
+#     server.handle_configure(client, b"dummy request")
+#     client.sendall.assert_called()
+#     mock_write.assert_called()
+
+
 @patch("wifi_manager.webserver.write_credentials")
-def test_handle_configure_success(mock_write, mock_read, mock_decode, mock_manager):
-    mock_decode.return_value = b"ssid=TestSSID&password=abc123"
+def test_handle_configure_success(mock_write, mock_manager):
     server = WebServer(mock_manager, sleep_fn=lambda x: None, reset_fn=lambda: None)
     client = Mock()
     mock_manager.wlan_sta.ifconfig.return_value = ["192.168.4.1"]
-    server.handle_configure(client, b"dummy request")
+    test_request = (
+        b"POST /configure HTTP/1.1\r\n"
+        b"Host: 192.168.4.1\r\nConnection: keep-alive\r\n"
+        b"Content-Length: 26\r\nCache-Control: max-age=0\r\n"
+        b"Origin: http://192.168.4.1\r\nContent-Type: application/x-www-form-urlencoded\r\n"
+        b"Upgrade-Insecure-Requests: 1\r\n"
+        b"User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+        b"(KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36\r\n"
+        b"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,"
+        b"image/avif,image/webp,image/apng,*/*;q=0.8\r\nSec-GPC: 1\r\n"
+        b"Referer: http://192.168.4.1/\r\nAccept-Encoding: gzip, deflate\r\n"
+        b"Accept-Language: en-GB,en-US;q=0.9,en;q=0.8,ko;q=0.7\r\n\r\nssid=Kimmies&password=1234"
+    )
+    server.handle_configure(client, test_request)
     client.sendall.assert_called()
     mock_write.assert_called()
 
@@ -166,7 +188,10 @@ def test_handle_client_configure(mock_manager):
         server._handle_client(mock_client)
 
         # Verify the configure handler was called
-        mock_handle_configure.assert_called_once_with(mock_client, b"POST /configure HTTP/1.1\r\nHost: localhost\r\n\r\nssid=TestSSID&password=TestPass123")
+        mock_handle_configure.assert_called_once_with(
+            mock_client,
+            b"POST /configure HTTP/1.1\r\nHost: localhost\r\n\r\nssid=TestSSID&password=TestPass123",
+        )
 
     # Verify the client connection was closed
     mock_client.close.assert_called_once()
