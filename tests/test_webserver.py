@@ -44,7 +44,7 @@ def test_reboot_device_false(mock_manager):
     mock_sleep.assert_not_called()
 
 
-def test_run(mock_manager):
+def test_run_no_connection_then_ok(mock_manager):
     server = WebServer(mock_manager)
     mock_socket = Mock()
     server._create_server_socket = Mock(return_value=mock_socket)
@@ -132,3 +132,72 @@ def test_create_server_socket(mock_socket, mock_manager):
     assert mock_socket.setsockopt.call_count == 1
     assert mock_socket.bind.call_args[0][0] == ("", 80)
     assert mock_socket.listen.call_args[0][0] == 1
+
+
+def test_handle_client_root(mock_manager):
+    """Test handling a client request for the root URL."""
+    mock_client = Mock()
+    mock_client.recv.side_effect = [
+        b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n",  # Simulate HTTP GET request
+        b"",  # End of request
+    ]
+    server = WebServer(mock_manager, debug=True)
+
+    with patch.object(server, "handle_root") as mock_handle_root:
+        server._handle_client(mock_client)
+
+        # Verify the root handler was called
+        mock_handle_root.assert_called_once_with(mock_client)
+
+    # Verify the client connection was closed
+    mock_client.close.assert_called_once()
+
+
+def test_handle_client_configure(mock_manager):
+    """Test handling a client request for the configure URL."""
+    mock_client = Mock()
+    mock_client.recv.side_effect = [
+        b"POST /configure HTTP/1.1\r\nHost: localhost\r\n\r\nssid=TestSSID&password=TestPass123",
+        b"",
+    ]
+    server = WebServer(mock_manager, debug=True)
+
+    with patch.object(server, "handle_configure") as mock_handle_configure:
+        server._handle_client(mock_client)
+
+        # Verify the configure handler was called
+        mock_handle_configure.assert_called_once_with(mock_client, b"POST /configure HTTP/1.1\r\nHost: localhost\r\n\r\nssid=TestSSID&password=TestPass123")
+
+    # Verify the client connection was closed
+    mock_client.close.assert_called_once()
+
+
+# def test_handle_client_not_found(mock_manager):
+#     """Test handling a client request for an unknown URL."""
+#     mock_client = Mock()
+#     mock_client.recv.side_effect = [
+#         b"GET /unknown HTTP/1.1\r\nHost: localhost\r\n\r\n",
+#         b"",
+#     ]
+#     server = WebServer(mock_manager, debug=True)
+
+#     with patch.object(server, "handle_not_found") as mock_handle_not_found:
+#         server._handle_client(mock_client)
+
+#         # Verify the not found handler was called
+#         mock_handle_not_found.assert_called_once_with(mock_client)
+
+#     # Verify the client connection was closed
+#     mock_client.close.assert_called_once()
+
+
+# def test_handle_client_timeout(mock_manager):
+#     """Test handling a client request with a timeout."""
+#     mock_client = Mock()
+#     mock_client.recv.side_effect = TimeoutError  # Simulate a timeout
+#     server = WebServer(mock_manager, debug=True)
+
+#     server._handle_client(mock_client)
+
+#     # Verify the client connection was closed even on timeout
+#     mock_client.close.assert_called_once()

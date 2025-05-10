@@ -69,6 +69,7 @@ class WebServer:
             if url == "":
                 self.handle_root(client)
             elif url == "configure":
+                print(request)
                 self.handle_configure(client, request)
             else:
                 self.handle_not_found(client)
