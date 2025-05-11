@@ -193,32 +193,32 @@ def test_handle_client_configure(mock_manager):
     mock_client.close.assert_called_once()
 
 
-# def test_handle_client_not_found(mock_manager):
-#     """Test handling a client request for an unknown URL."""
-#     mock_client = Mock()
-#     mock_client.recv.side_effect = [
-#         b"GET /unknown HTTP/1.1\r\nHost: localhost\r\n\r\n",
-#         b"",
-#     ]
-#     server = WebServer(mock_manager, debug=True)
+def test_handle_client_not_found(mock_manager):
+    """Test handling a client request for an unknown URL."""
+    mock_client = Mock()
+    mock_client.recv.side_effect = [
+        b"GET /unknown HTTP/1.1\r\nHost: localhost\r\n\r\n",
+        b"",
+    ]
+    server = WebServer(mock_manager, debug=True)
 
-#     with patch.object(server, "handle_not_found") as mock_handle_not_found:
-#         server._handle_client(mock_client)
+    with patch.object(server, "handle_not_found") as mock_handle_not_found:
+        server._handle_client(mock_client)
 
-#         # Verify the not found handler was called
-#         mock_handle_not_found.assert_called_once_with(mock_client)
+        # Verify the not found handler was called
+        mock_handle_not_found.assert_called_once_with(mock_client)
 
-#     # Verify the client connection was closed
-#     mock_client.close.assert_called_once()
+    # Verify the client connection was closed
+    mock_client.close.assert_called_once()
 
 
-# def test_handle_client_timeout(mock_manager):
-#     """Test handling a client request with a timeout."""
-#     mock_client = Mock()
-#     mock_client.recv.side_effect = TimeoutError  # Simulate a timeout
-#     server = WebServer(mock_manager, debug=True)
+def test_handle_client_timeout(mock_manager):
+    """Test handling a client request with a timeout."""
+    mock_client = Mock()
+    mock_client.recv.side_effect = TimeoutError  # Simulate a timeout
+    server = WebServer(mock_manager, debug=True)
 
-#     server._handle_client(mock_client)
+    server._handle_client(mock_client)
 
-#     # Verify the client connection was closed even on timeout
-#     mock_client.close.assert_called_once()
+    # Verify the client connection was closed even on timeout
+    mock_client.close.assert_called_once()
