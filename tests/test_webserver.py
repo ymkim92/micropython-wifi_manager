@@ -96,18 +96,6 @@ def test_handle_root(mock_manager):
     client.sendall.assert_called()
 
 
-# @patch("wifi_manager.webserver.url_decode")
-# @patch("wifi_manager.webserver.write_credentials")
-# def test_handle_configure_success(mock_write, mock_decode, mock_manager):
-#     mock_decode.return_value = b"ssid=TestSSID&password=abc123"
-#     server = WebServer(mock_manager, sleep_fn=lambda x: None, reset_fn=lambda: None)
-#     client = Mock()
-#     mock_manager.wlan_sta.ifconfig.return_value = ["192.168.4.1"]
-#     server.handle_configure(client, b"dummy request")
-#     client.sendall.assert_called()
-#     mock_write.assert_called()
-
-
 @patch("wifi_manager.webserver.write_credentials")
 def test_handle_configure_success(mock_write, mock_manager):
     server = WebServer(mock_manager, sleep_fn=lambda x: None, reset_fn=lambda: None)
@@ -129,13 +117,6 @@ def test_handle_configure_success(mock_write, mock_manager):
     server.handle_configure(client, test_request)
     client.sendall.assert_called()
     mock_write.assert_called()
-
-
-def test_handle_not_found(mock_manager):
-    server = WebServer(mock_manager)
-    client = Mock()
-    server.handle_not_found(client)
-    client.sendall.assert_called()
 
 
 @patch("wifi_manager.webserver.socket")
@@ -161,7 +142,6 @@ def test_handle_client_root(mock_manager):
     mock_client = Mock()
     mock_client.recv.side_effect = [
         b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n",  # Simulate HTTP GET request
-        b"",  # End of request
     ]
     server = WebServer(mock_manager, debug=True)
 
@@ -173,6 +153,22 @@ def test_handle_client_root(mock_manager):
 
     # Verify the client connection was closed
     mock_client.close.assert_called_once()
+
+
+def test_handle_client_connection_closed(mock_manager):
+    server = WebServer(mock_manager)
+    mock_client = Mock()
+    # Empty chunk simulates closed connection
+    mock_client.recv.side_effect = [b"GET /", b"", b"more data"]
+
+    server._handle_client(mock_client)
+
+    # Should stop after receiving empty chunk
+    assert mock_client.recv.call_count == 2
+    # from handle_not_found
+    mock_client.sendall.assert_called_once()
+    mock_client.close.assert_called()
+    assert mock_client.close.call_count == 2
 
 
 def test_handle_client_configure(mock_manager):
