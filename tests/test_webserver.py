@@ -222,3 +222,35 @@ def test_handle_client_timeout(mock_manager):
 
     # Verify the client connection was closed even on timeout
     mock_client.close.assert_called_once()
+
+
+def test_handle_configure_missing_ssid(mock_manager):
+    """Test handle_configure when SSID is empty"""
+    server = WebServer(mock_manager)
+    mock_client = Mock()
+
+    # Test with empty SSID
+    with patch("wifi_manager.webserver.url_decode", return_value=b"ssid=&password=test123"):
+        server.handle_configure(mock_client, b"")
+        mock_client.sendall.assert_called()
+        # from send_header
+        assert mock_client.send.call_count == 3
+        assert b"HTTP/1.1 400" in mock_client.send.call_args_list[0][0][0]
+        # Verify error message was sent
+        assert b"SSID must be provided!" in mock_client.sendall.call_args[0][0]
+
+
+def test_handle_configure_missing_parameters(mock_manager):
+    """Test handle_configure when parameters are missing from the request"""
+    server = WebServer(mock_manager)
+    mock_client = Mock()
+
+    # Test with empty request
+    with patch("wifi_manager.webserver.url_decode", return_value=b""):
+        server.handle_configure(mock_client, b"")
+        mock_client.sendall.assert_called()
+        # from send_header
+        assert mock_client.send.call_count == 3
+        assert b"HTTP/1.1 400" in mock_client.send.call_args_list[0][0][0]
+        # Verify error message was sent
+        assert b"Parameters not found!" in mock_client.sendall.call_args[0][0]
