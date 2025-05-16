@@ -11,8 +11,9 @@ install-requirement:
 list:
     mpremote ls
 upload:
-    mpremote cp src/main.py :main.py
-    mpremote mkdir :diy_clock || echo "Directory already exists."
-    mpremote cp src/diy_clock/*.py :diy_clock/
+    mpremote mkdir :lib || echo "Directory already exists."
+    mpremote cp src/wifi_manager/*.py :lib/wifi_manager/
+    # just to check if the files are uploaded
+    mpremote ls :lib/wifi_manager/
 mount_and_run:
     mpremote mount src/ run src/main.py
