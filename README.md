@@ -4,6 +4,7 @@ WiFi Manager for ESP32 using MicroPython. It might work in any other board since
 
 ![ESP32](https://img.shields.io/badge/ESP-32-000000.svg?longCache=true&style=flat&colorA=CC101F)
 ![CI](https://github.com/ymkim92/micropython-wifi_manager/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://codecov.io/gh/<username>/<repository>/branch/main/graph/badge.svg)
 
 ## How It Works
 
