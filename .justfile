@@ -1,5 +1,7 @@
 run-test:
     PYTHONPATH=src pytest -svv 
+run-test-coverage:
+    PYTHONPATH=src pytest -svv --cov=src --cov-report=term-missing --cov-report=html
 run-test-filter TEST:
     PYTHONPATH=src pytest -svv -k "{{TEST}}"
 lint:
