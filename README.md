@@ -1,53 +1,29 @@
 # WiFi Manager
 
-![CI](https://github.com/ymkim92/micropython-wifi_manager/actions/workflows/ci.yml/badge.svg)
+WiFi Manager for ESP32 using MicroPython. It might work in any other board since it only uses standard MicroPython libraries, but that's not tested.
 
-
-WiFi Manager for ESP8266 and ESP32 using MicroPython. It might work in any other board since it only uses standard MicroPython libraries, but that's not tested.
-
-![ESP8266](https://img.shields.io/badge/ESP-8266-000000.svg?longCache=true&style=flat&colorA=CC101F)
 ![ESP32](https://img.shields.io/badge/ESP-32-000000.svg?longCache=true&style=flat&colorA=CC101F)
-
-## What's new?
-
-Version 2.0 comes with some improvements:
-- Better documentation (I hope);
-- Some aesthetical changes in the code;
-- Removal of unnecessary messages;
-- Removal of the ability to set the ip address (to avoid unexpected problems);
-- Option to reboot after network configuration (needs improvement);
-
-## Wishlist
-
-- [ ] Allow user to customize CSS;
-- [ ] Custom fields for extra configuration (like mqtt server, etc)
-- [ ] Turn this into a real python library with the option to be installed using pip;
+![CI](https://github.com/ymkim92/micropython-wifi_manager/actions/workflows/ci.yml/badge.svg)
 
 ## How It Works
 
 - When your device starts up, it will try to connect to a previously saved wifi.
 - If there is no saved network or if it fails to connect, it will start an access point;
-- By connecting to the access point and going to the address 192.168.4.1 you be able to find your network and input the credentials;
+- By connecting to the access point and going to the address `192.168.4.1` you be able to find your network and input the credentials;
 - It will try to connect to the desired network, and if it's successful, it will save the credentials for future usage;
 - Be aware that the wifi credentials will be saved in a plain text file, and this can be a security fault depending on your application;
 
 ## Installation and Usage
+ 
+I use `justfile` to upload the scripts to a target device:
 
-```python
-# Download the "wifi_manager.py" file to your device;
+```sh
+$ just upload
+```
 
-# Import the library:
-from wifi_manager import WifiManager
-
-# Initialize it
-wm = WifiManager()
-
-# By default the SSID is WiFiManager and the password is wifimanager.
-# You can customize the SSID and password of the AP for your needs:
-wm = WifiManager(ssid="my ssid",password="my password")
-
-# Start the connection:
-wm.connect()
+You may want to use `mount` of mpremote for test or debugging:
+```sh
+$ just mount_and_run
 ```
 
 ## Methods
