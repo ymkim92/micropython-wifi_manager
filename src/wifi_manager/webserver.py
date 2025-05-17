@@ -131,7 +131,8 @@ class WebServer:
         """Handle the root URL."""
         ssid_options = "".join(
             f"""
-            <p><input type="radio" name="ssid" value="{ssid.decode("utf-8")}" id="{ssid.decode("utf-8")}">
+            <p><input type="radio" name="ssid" value="{ssid.decode("utf-8")}" 
+            id="{ssid.decode("utf-8")}">
             <label for="{ssid.decode("utf-8")}">&nbsp;{ssid.decode("utf-8")}</label></p>
             """
             for ssid, *_ in self.wlan_sta.scan()
@@ -166,7 +167,8 @@ class WebServer:
         elif self.manager.wifi_connect(ssid, password):
             self.send_response(
                 client,
-                f"<p>Successfully connected to</p><h1>{ssid}</h1><p>IP address: {self.wlan_sta.ifconfig()[0]}</p>",
+                f"<p>Successfully connected to</p><h1>{ssid}</h1><p>IP address: "
+                f"{self.wlan_sta.ifconfig()[0]}</p>",
             )
             profiles = read_credentials(self.wifi_credentials, self.debug)
             profiles[ssid] = password

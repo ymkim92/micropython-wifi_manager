@@ -186,7 +186,8 @@ def test_handle_client_configure(mock_manager):
         # Verify the configure handler was called
         mock_handle_configure.assert_called_once_with(
             mock_client,
-            b"POST /configure HTTP/1.1\r\nHost: localhost\r\n\r\nssid=TestSSID&password=TestPass123",
+            b"POST /configure HTTP/1.1\r\nHost: localhost\r\n\r\n"
+            b"ssid=TestSSID&password=TestPass123",
         )
 
     # Verify the client connection was closed
