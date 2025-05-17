@@ -39,4 +39,11 @@ jobs:
       # Step 5: Run tests
       - name: Run Tests
         run: |
-          PYTHONPATH=src pytest -svv 
+          PYTHONPATH=src pytest --cov=src --cov-report=term-missing --cov-report=html -svv
+
+      # Step 6: Upload HTML Coverage Report
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: htmlcov/
