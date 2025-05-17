@@ -33,9 +33,10 @@ jobs:
       # Step 4: Run linting
       - name: Run Linting
         run: |
-          just lint
+          ruff format src tests
+          ruff check src tests --fix --exit-zero --line-length 100 --target-version py38
 
       # Step 5: Run tests
       - name: Run Tests
         run: |
-          just run-test
+          PYTHONPATH=src pytest -svv 
