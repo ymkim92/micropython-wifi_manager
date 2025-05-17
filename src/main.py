@@ -1,4 +1,4 @@
-from wifi_manager import WifiManager
+from wifi_manager.manager import WifiManager
 import utime
 
 # Example of usage
