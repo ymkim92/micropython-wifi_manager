@@ -1,7 +1,2 @@
-src = "src/wifi_manager"
-dst = "lib/wifi_manager"
-
-module(f"{src}/__init__.py", dest=dst)
-module(f"{src}/manager.py", dest=dst)
-module(f"{src}/network_utils.py", dest=dst)
-module(f"{src}/webserver.py", dest=dst)
+# copy all files inside src/wifi_manager into /lib/wifi_manager on the device.
+module("wifi_manager", base_path="src/wifi_manager")
