@@ -1,9 +1,9 @@
 {
 "urls": [
-    ["wifi_manager/__init__.py", "github/ymkim92/micropython-wifi_manager/src/wifi_manager/__init__.py"],
-    ["wifi_manager/manager.py", "github/ymkim92/micropython-wifi_manager/src/wifi_manager/manager.py"],
-    ["wifi_manager/network_utils.py", "github/ymkim92/micropython-wifi_manager/src/wifi_manager/network_utils.py"],
-    ["wifi_manager/webserver.py", "github/ymkim92/micropython-wifi_manager/src/wifi_manager/webserver.py"]
+    ["wifi_manager/__init__.py", "github:ymkim92/micropython-wifi_manager/src/wifi_manager/__init__.py"],
+    ["wifi_manager/manager.py", "github:ymkim92/micropython-wifi_manager/src/wifi_manager/manager.py"],
+    ["wifi_manager/network_utils.py", "github:ymkim92/micropython-wifi_manager/src/wifi_manager/network_utils.py"],
+    ["wifi_manager/webserver.py", "github:ymkim92/micropython-wifi_manager/src/wifi_manager/webserver.py"]
 ],
 "version": "0.1"
 }
